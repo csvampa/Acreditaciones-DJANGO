@@ -1,0 +1,66 @@
+{% extends 'layouts/estructura.html' %}
+
+
+{% block sidebar %}
+    <!-- En este bloque, puedes omitir o modificar el contenido del sidebar si es necesario -->
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav"> 
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <div class="sb-sidenav-menu-heading">Core</div>
+                    <a class="nav-link" href="tables.html">
+                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    Cargar Evento
+                </a>
+                <a class="nav-link" href="tables.html">
+                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    Eliminar Evento
+                </a>
+                </div>
+            </div>
+            <div class="sb-sidenav-footer">
+                <div class="small">Logged in as:</div>
+                {{ user }}
+            </div>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+            <main>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Seleccione un evento
+                        <span class="float-end">{{ fecha_actual|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-bordered" id="miTabla">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Editar</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha de Inicio</th>
+                                    <th>Fecha de Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evento in eventos %}
+                                <tr {% if evento.fechaFin > fecha_actual %}class="fila-gris"{% endif %}>
+                                    <td><button type="button" class="btn btn-sm"> 
+                                        <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                                     </button
+                                     ></td>
+                                    <td><a href="{% url 'db_evento' evento_id=evento.id evento_nombre=evento.nombre %}">{{ evento.nombre }}</a></td>
+                                    <td>{{ evento.fechaInicio|date:"d/m/Y" }}</td>
+                                    <td>{{ evento.fechaFin|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+{% endblock %}

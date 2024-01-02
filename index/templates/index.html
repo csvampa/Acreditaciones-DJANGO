@@ -1,0 +1,71 @@
+{% extends 'layouts/estructura.html' %}
+{% block content %}
+<main>
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Database</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/accounts/profile">Dashboard</a></li>
+        </ol>
+        <div class="card mb-4">
+            <!-- <div class="card-body">
+                                DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the
+                                <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>
+                                .
+                            </div> -->
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                {{ nombre_evento }}
+                <span class="float-end">{{ fecha_actual|date:"d/m/Y" }}</span>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered" id="miTabla">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Editar</th>
+                            <th class="hidden">ID</th>
+                            <th>DNI</th>
+                            <th>Nombre & Apellido</th>
+                            <th>Empresa</th>
+                            <th>Acceso</th>
+                            <th>Observaciones</th>
+                            <th>Asistencia</th>
+                            <th class="hidden">Vencimiento del seguro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for persona in personas %}
+                        <tr class= '{% if persona.fechaHastaSeguro > fecha_actual %}fila-roja{% endif %}'>
+                            <td><button type="button" class="btn btn-sm"> 
+                                <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                             </button
+                             ></td>
+                            <td class="hidden">{{ persona.id }}</td>
+                            <td>{{ persona.dni }}</td>
+                            <td>{{ persona.nombreyapellido }}</td>
+                            <td>{{ persona.empresa }}</td>
+                            <td>{{ persona.acceso }}</td>
+                            <td>{{ persona.obsevaciones }}</td>
+                            <td>
+                                <form method="post" action="{% url 'db_evento' evento_id=evento.id evento_nombre=nombre_evento %}">
+                                {% csrf_token %}
+                                <input type="checkbox" name="asistencia" value="True" {% if persona.asistencia %}checked{% endif %} onchange="this.form.submit()"></td>
+                                </form>
+                            <td class="hidden">{{ persona.vencimiento }}</td>
+                            <!-- <td>
+                                <label>
+                                    <input id="asistencia-checkbox" name="asistencia" type="checkbox" 
+                                    {% if persona.asistencia %}checked{% endif %} {% if persona.fechaHasta > fecha_actual %}disabled{% endif %}>
+                                </label>
+                            </td> -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
