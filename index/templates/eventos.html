@@ -52,7 +52,7 @@
                                         <i class="fa-regular fa-pen-to-square fa-sm"></i>
                                      </button
                                      ></td>
-                                    <td><a href="{% url 'db_evento' evento_id=evento.id evento_nombre=evento.nombre %}">{{ evento.nombre }}</a></td>
+                                    <td><a href="{% url 'db_evento.Persona' evento_id=evento.id evento_nombre=evento.nombre %}">{{ evento.nombre }}</a></td>
                                     <td>{{ evento.fechaInicio|date:"d/m/Y" }}</td>
                                     <td>{{ evento.fechaFin|date:"d/m/Y" }}</td>
                                 </tr>

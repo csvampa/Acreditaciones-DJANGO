@@ -17,4 +17,5 @@ class CargaMasivaForm(forms.Form):
 class ActualizarDatos(forms.Form):
     class Meta:
         model = Persona
-        fields = ['dni', 'nombre_y_apellido', 'empresa', 'acceso', 'asistencia']
+        fields = ['asistencia']
+        # 'dni', 'nombre_y_apellido', 'empresa', 'acceso', 
