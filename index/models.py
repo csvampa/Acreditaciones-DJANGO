@@ -53,8 +53,7 @@ class Persona(models.Model):
         super().save(*args, **kwargs) 
 
     def __str__(self):
-        return self.nombre_y_apellido
-    
+        return self.nombreyapellido
     
     class Meta:
         unique_together = ('dni', 'evento')

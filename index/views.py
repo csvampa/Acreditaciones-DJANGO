@@ -8,13 +8,13 @@ from django.urls import reverse
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-# from django.views import View
+from django.views import View
 
-class Eventos:
+class Eventos(View):
     def __init__(self,) -> None:
         pass
     
-    def select(self, request):
+    def get(self, request):
         user=request.user
         if user.is_superuser:
             eventos = Evento.objects.all()
@@ -23,15 +23,23 @@ class Eventos:
         else:
             return redirect('login')
         
-class Personas:
+class Personas(View):
     def __init__(self) -> None:
         pass
-    def db_evento(self, request, evento_id, evento_nombre):
+    def get(self, request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         personas = Persona.objects.filter(evento=evento)
         fecha_actual = datetime.now()
-        return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre})
-    def carga_individual(request, evento_id, evento_nombre):
+        return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre, 'id_evento':evento_id})
+    #  POST PARA ASISTENCIA NO ANDA
+    def post(self, request, persona_id, evento_id, evento_nombre):
+        if 'asistencia' in request.POST:
+            persona_id = request.POST['asistencia']
+            persona = Persona.objects.get(pk=persona_id)
+            persona.asistencia = not persona.asistencia  # Cambia el estado de la asistencia
+            persona.save()
+        return redirect('db_evento', {'nombre_evento':evento_nombre, 'id_evento':evento_id})
+    def cargaIndividual(request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         if request.method == 'POST':
             form = CargaIndividualForm(request.POST)
@@ -58,7 +66,7 @@ class Personas:
         else:
             form = CargaIndividualForm()
         return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
-    def carga_masiva(request, evento_id, evento_nombre):
+    def cargaMasiva(request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         if request.method == 'GET':
             return render(request, 'cargaMasiva.html', {'form': CargaMasivaForm()})
@@ -103,3 +111,6 @@ class Personas:
                 return redirect(url)
             else:
                 return render(request, 'error.html', {'mensaje': 'El archivo no es un archivo Excel válido.'})
+
+def error_view(request):
+    return render(request, 'error.html')

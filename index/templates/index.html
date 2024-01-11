@@ -47,11 +47,9 @@
                             <td>{{ persona.empresa }}</td>
                             <td>{{ persona.acceso }}</td>
                             <td>{{ persona.obsevaciones }}</td>
-                            <td>
-                                <form method="post" action ="{% url 'db_evento' evento_id=evento.id evento_nombre=evento.nombre %}">
-                                {% csrf_token %}
-                                <input type="checkbox" name="asistencia" value="True" {% if persona.asistencia %}checked{% endif %} onchange="this.form.submit()">{{ persona.asistencia }}</td>
-                                </form>
+                            <td> 
+                                <input type="checkbox" name="asistencia" value="True" {% if persona.asistencia %}checked{% endif %} onchange="this.form.submit()">
+                            </td>
                             <td class="hidden">{{ persona.vencimiento }}</td>
                             <!-- <td>
                                 <label>
