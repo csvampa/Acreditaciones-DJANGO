@@ -14,7 +14,7 @@ class CargaMasivaForm(forms.Form):
     archivo_excel = forms.FileField(label='Suba un archivo Excel.')
     fechaHastaSeguro = forms.DateField(label='Vencimiento del Seguro')
 
-class ActualizarDatos(forms.Form):
+class ActualizarDatos(forms.ModelForm):
     class Meta:
         model = Persona
         fields = ['asistencia']

@@ -26,19 +26,25 @@ class Eventos(View):
 class Personas(View):
     def __init__(self) -> None:
         pass
+    def dispatch(self, request, *args, **kwargs):
+        # Obtén los valores de evento_id y evento_nombre de los kwargs
+        self.evento_id = kwargs.get('evento_id')
+        self.evento_nombre = kwargs.get('evento_nombre')
+        return super().dispatch(request, *args, **kwargs)
     def get(self, request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         personas = Persona.objects.filter(evento=evento)
         fecha_actual = datetime.now()
         return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre, 'id_evento':evento_id})
     #  POST PARA ASISTENCIA NO ANDA
-    def post(self, request, persona_id, evento_id, evento_nombre):
-        if 'asistencia' in request.POST:
-            persona_id = request.POST['asistencia']
-            persona = Persona.objects.get(pk=persona_id)
-            persona.asistencia = not persona.asistencia  # Cambia el estado de la asistencia
-            persona.save()
-        return redirect('db_evento', {'nombre_evento':evento_nombre, 'id_evento':evento_id})
+    def post(self, request, evento_nombre, evento_id):
+        persona_id = request.POST.get('persona_id')
+        persona = get_object_or_404(Persona, pk=persona_id)
+        if request.method == 'POST':
+            form = ActualizarDatos(request.POST, instance=persona)
+            if form.is_valid():
+                form.save()
+        return redirect('db_evento', evento_nombre=evento_nombre, evento_id=evento_id)
     def cargaIndividual(request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         if request.method == 'POST':

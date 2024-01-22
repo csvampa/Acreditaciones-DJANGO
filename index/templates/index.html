@@ -37,26 +37,31 @@
                     <tbody>
                         {% for persona in personas %}
                         <tr class= '{% if persona.fechaHastaSeguro > fecha_actual %}fila-roja{% endif %}'>
-                            <td><button type="button" class="btn btn-sm"> 
-                                <i class="fa-regular fa-pen-to-square fa-sm"></i>
-                             </button
-                             ></td>
-                            <td class="hidden">{{ persona.id }}</td>
-                            <td>{{ persona.dni }}</td>
-                            <td>{{ persona.nombreyapellido }}</td>
-                            <td>{{ persona.empresa }}</td>
-                            <td>{{ persona.acceso }}</td>
-                            <td>{{ persona.obsevaciones }}</td>
-                            <td> 
-                                <input type="checkbox" name="asistencia" value="True" {% if persona.asistencia %}checked{% endif %} onchange="this.form.submit()">
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="persona_id" value="{{ persona.id }}">
+                                    <button type="button" class="btn btn-sm"> 
+                                        <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                                    </button>
+                                    <td class="hidden">{{ persona.id }}</td>
+                                    <td>{{ persona.dni }}</td>
+                                    <td>{{ persona.nombreyapellido }}</td>
+                                    <td>{{ persona.empresa }}</td>
+                                    <td>{{ persona.acceso }}</td>
+                                    <td>{{ persona.obsevaciones }}</td>
+                                    <td> 
+                                        <input type="checkbox" name="asistencia" class= "form-check-input" value="True" {% if persona.asistencia %}checked{% endif %} onchange="this.form.submit()">
+                                    </td>
+                                    <td class="hidden">{{ persona.vencimiento }}</td>
+                                    <!-- <td>
+                                        <label>
+                                            <input id="asistencia-checkbox" name="asistencia" type="checkbox" 
+                                            {% if persona.asistencia %}checked{% endif %} {% if persona.fechaHasta > fecha_actual %}disabled{% endif %}>
+                                        </label>
+                                    </td> -->
+                                </form>
                             </td>
-                            <td class="hidden">{{ persona.vencimiento }}</td>
-                            <!-- <td>
-                                <label>
-                                    <input id="asistencia-checkbox" name="asistencia" type="checkbox" 
-                                    {% if persona.asistencia %}checked{% endif %} {% if persona.fechaHasta > fecha_actual %}disabled{% endif %}>
-                                </label>
-                            </td> -->
                         </tr>
                         {% endfor %}
                     </tbody>
