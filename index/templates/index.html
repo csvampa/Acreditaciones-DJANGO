@@ -41,13 +41,13 @@
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="persona_id" value="{{ persona.id }}">
-                                    <button type="button" class="btn btn-sm"> 
+                                    <button type="button" class="btn btn-sm" onclick="editarPersona(this)"> 
                                         <i class="fa-regular fa-pen-to-square fa-sm"></i>
                                     </button>
                                     <td class="hidden">{{ persona.id }}</td>
                                     <td>{{ persona.dni }}</td>
                                     <td>{{ persona.nombreyapellido }}</td>
-                                    <td>{{ persona.empresa }}</td>
+                                    <td>{{ persona.empresa.nombre }}</td>
                                     <td>{{ persona.acceso }}</td>
                                     <td>{{ persona.obsevaciones }}</td>
                                     <td> 
