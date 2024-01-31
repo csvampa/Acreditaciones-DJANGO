@@ -23,7 +23,7 @@ class Eventos(View):
             return render(request, 'eventos.html', {'eventos': eventos, 'fecha_actual': fecha_actual})
         else:
             return redirect('login')
-        
+   
 class Personas(View):
     def __init__(self) -> None:
         pass
@@ -50,13 +50,13 @@ class Personas(View):
     #     evento = Evento.objects.get(pk=evento_id)
     #     form = CargaIndividualForm()
     #     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
-            
+
+@login_required   
 def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
     evento = Evento.objects.get(pk=evento_id)
     persona_existente = None
     if persona_id: 
         persona_existente = get_object_or_404(Persona, pk=persona_id, evento=evento)
-
     if request.method == 'POST':
         form = CargaIndividualForm(request.POST, instance=persona_existente)
         if form.is_valid():
@@ -67,32 +67,41 @@ def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
             if existing_person:
                 messages.error(request, f'El DNI {dni} ya existe en el evento.')
             else:
-                form.save()
-                messages.success(request, f'Datos de la persona con DNI {dni} actualizados.')
-                if persona_id:
-                    # Edición: redirige a la página de detalle de evento
-                    url = reverse('db_evento', args=[evento_id, evento_nombre])
-                    return redirect(url)
-                else:
-                    nombre_empresa = form.cleaned_data['empresa']
-                    empresa, _ = Empresa.objects.get_or_create(nombre=nombre_empresa)
-                    evento_nombre = evento.nombre
-                    Persona.objects.create(
-                        nombreyapellido=form.cleaned_data['nombreyapellido'],
-                        dni=form.cleaned_data['dni'],
-                        empresa=empresa,
-                        acceso=form.cleaned_data['acceso'],
-                        asistencia=form.cleaned_data['asistencia'],
-                        observaciones=form.cleaned_data.get('observaciones', ''),
-                        fechaHastaSeguro=form.cleaned_data.get('fechaHastaSeguro', None),
-                        evento=evento
-                    )
-                    url = reverse('db_evento', args=[evento_id, evento_nombre])
-                    return redirect(url)
+                nombre_empresa = form.cleaned_data['empresa']
+                empresa, _ = Empresa.objects.get_or_create(nombre=nombre_empresa)
+                evento_nombre = evento.nombre
+                Persona.objects.create(
+                    nombreyapellido=form.cleaned_data['nombreyapellido'],
+                    dni=form.cleaned_data['dni'],
+                    empresa=empresa,
+                    acceso=form.cleaned_data['acceso'],
+                    asistencia=form.cleaned_data['asistencia'],
+                    observaciones=form.cleaned_data.get('observaciones', ''),
+                    fechaHastaSeguro=form.cleaned_data.get('fechaHastaSeguro', None),
+                    evento=evento
+                )
+                url = reverse('db_evento', args=[evento_id, evento_nombre])
+                return redirect(url)
     else:
         form = CargaIndividualForm()
     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
 
+@login_required
+def edicionIndividual(request, persona_id):
+    persona = get_object_or_404(Persona, pk=persona_id)
+    if request.method == 'POST':
+        form = CargaIndividualForm(request.POST, instance=persona)
+        if form.is_valid():
+            form.save()
+            return redirect('db_evento', evento_id=persona.evento.id, evento_nombre=persona.evento.nombre)
+    else:
+        form = CargaIndividualForm(instance=persona)
+
+    return render(request, 'editar_persona.html', {'form': form, 'persona': persona})
+        
+
+
+@login_required
 def cargaMasiva(request, evento_id, evento_nombre):
     evento = Evento.objects.get(pk=evento_id)
     if request.method == 'GET':

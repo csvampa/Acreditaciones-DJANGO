@@ -101,7 +101,7 @@ function editarPersona(button) {
     // Crear un formulario invisible para enviar los datos al view cargaIndividual
     var form = document.createElement("form");
     form.setAttribute("method", "post");
-    form.setAttribute("action", "cargaIndividual");
+    form.setAttribute("action", "edicionIndividual");
 
     // Crear campos ocultos con los datos de la persona
     var csrfInput = document.createElement("input");

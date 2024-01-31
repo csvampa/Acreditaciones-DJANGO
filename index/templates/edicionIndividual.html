@@ -1,0 +1,40 @@
+{% extends 'layouts/estructura.html' %}
+{% block content %}
+<main>
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Edici&oacuten Individual</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/accounts/profile">Dashboard</a></li>
+            <li class="breadcrumb-item active">Edici&oacuten Individual</li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                {{ evento.nombre }}
+            </div>
+            <div class="card-body">
+                <form method="POST" class="form-inline"> {% csrf_token %}
+                    <div class="form-group">
+                        <p class="form-group">
+                            {{ form.as_p }}
+                        </p>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                                {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <!-- <input type="hidden" name="asistencia" value="False"> Campo oculto para enviar False por defecto -->
+                        <!-- <p class="form-group">
+                                        <input type="checkbox" id="asistencia_checkbox" name="asistencia" value="True" {% if form.asistencia.value %}checked{% endif %}>
+                                        <label for="asistencia_checkbox">Asistencia</label>
+                                    </p> -->
+                        <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
