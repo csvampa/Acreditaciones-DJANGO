@@ -67,6 +67,17 @@ def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
             if existing_person:
                 messages.error(request, f'El DNI {dni} ya existe en el evento.')
             else:
+                persona = form.save(commit=False)
+                persona.evento = evento
+
+                # Manejar empresa automáticamente
+                nombre_empresa = form.cleaned_data['empresa']
+                persona.empresa, _ = Empresa.objects.get_or_create(nombre=nombre_empresa)
+
+                persona.save()  # Guardar todo
+
+                messages.success(request, f'Datos de la persona con DNI {dni} actualizados.')
+                '''
                 form.save()
                 messages.success(request, f'Datos de la persona con DNI {dni} actualizados.')
                 if persona_id:
@@ -87,8 +98,9 @@ def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
                         fechaHastaSeguro=form.cleaned_data.get('fechaHastaSeguro', None),
                         evento=evento
                     )
-                    url = reverse('db_evento', args=[evento_id, evento_nombre])
-                    return redirect(url)
+                    '''
+                url = reverse('db_evento', args=[evento_id, evento_nombre])
+                return redirect(url)
     else:
         form = CargaIndividualForm()
     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})

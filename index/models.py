@@ -37,7 +37,7 @@ class Empresa(models.Model):
         return self.nombre
 
 class Persona(models.Model):
-    dni = models.IntegerField()
+    dni = models.IntegerField(unique=True)
     nombreyapellido = models.CharField(max_length=200)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     acceso = models.CharField(max_length=20, choices= ACCESO_CHOICES, default='')
@@ -54,10 +54,10 @@ class Persona(models.Model):
 
     def __str__(self):
         return self.nombreyapellido
-    
+    '''
     class Meta:
         unique_together = ('dni', 'evento')
-
+'''
 class Seguro(models.Model):
     tipo = models.CharField(max_length=100)
     poliza = models.IntegerField(blank=True, null=True)
