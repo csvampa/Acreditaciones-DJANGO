@@ -24,6 +24,11 @@
                             <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
                                 {% endfor %}
                         </ul>
+                        <datalist id="empresas-sugeridas">
+                            {% for nombre in form.existing_empresas %}
+                            <option value="{{ nombre }}"></option>
+                            {% endfor %}
+                        </datalist>
                         {% endif %}
                         <!-- <input type="hidden" name="asistencia" value="False"> Campo oculto para enviar False por defecto -->
                         <!-- <p class="form-group">

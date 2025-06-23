@@ -37,7 +37,7 @@ class Personas(View):
         personas = Persona.objects.filter(evento=evento)
         fecha_actual = datetime.now()
         return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre, 'id_evento':evento_id})
-    #  POST PARA ASISTENCIA NO ANDA
+    #  POST PARA ASISTENCIA
     def post(self, request, evento_nombre, evento_id):
         persona_id = request.POST.get('persona_id')
         persona = get_object_or_404(Persona, pk=persona_id)
@@ -52,57 +52,34 @@ class Personas(View):
     #     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
             
 def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
-    evento = Evento.objects.get(pk=evento_id)
+    evento = get_object_or_404(Evento, pk=evento_id)
     persona_existente = None
-    if persona_id: 
+    if persona_id:
         persona_existente = get_object_or_404(Persona, pk=persona_id, evento=evento)
 
     if request.method == 'POST':
-        form = CargaIndividualForm(request.POST, instance=persona_existente)
+        form = CargaIndividualForm(request.POST, instance=persona_existente, evento=evento, persona_id=persona_id)
+
         if form.is_valid():
-            dni = form.cleaned_data['dni']
-            existing_person = Persona.objects.filter(
-                Q(dni=dni, evento=evento) & ~Q(pk=persona_id)
-            ).first()
-            if existing_person:
-                messages.error(request, f'El DNI {dni} ya existe en el evento.')
+            persona = form.save(commit=False)
+            persona.evento = evento
+            
+            # Crear empresa si es necesario
+            empresa_nombre = form.cleaned_data.get('empresa')
+            if empresa_nombre:
+                empresa_obj, _ = Empresa.objects.get_or_create(nombre=empresa_nombre)
+                persona.empresa = empresa_obj
             else:
-                persona = form.save(commit=False)
-                persona.evento = evento
-
-                # Manejar empresa automáticamente
-                nombre_empresa = form.cleaned_data['empresa']
-                persona.empresa, _ = Empresa.objects.get_or_create(nombre=nombre_empresa)
-
-                persona.save()  # Guardar todo
-
-                messages.success(request, f'Datos de la persona con DNI {dni} actualizados.')
-                '''
-                form.save()
-                messages.success(request, f'Datos de la persona con DNI {dni} actualizados.')
-                if persona_id:
-                    # Edición: redirige a la página de detalle de evento
-                    url = reverse('db_evento', args=[evento_id, evento_nombre])
-                    return redirect(url)
-                else:
-                    nombre_empresa = form.cleaned_data['empresa']
-                    empresa, _ = Empresa.objects.get_or_create(nombre=nombre_empresa)
-                    evento_nombre = evento.nombre
-                    Persona.objects.create(
-                        nombreyapellido=form.cleaned_data['nombreyapellido'],
-                        dni=form.cleaned_data['dni'],
-                        empresa=empresa,
-                        acceso=form.cleaned_data['acceso'],
-                        asistencia=form.cleaned_data['asistencia'],
-                        observaciones=form.cleaned_data.get('observaciones', ''),
-                        fechaHastaSeguro=form.cleaned_data.get('fechaHastaSeguro', None),
-                        evento=evento
-                    )
-                    '''
-                url = reverse('db_evento', args=[evento_id, evento_nombre])
-                return redirect(url)
+                persona.empresa = None
+            
+            persona.save()
+            messages.success(request, f'Datos de la persona con DNI {persona.dni} guardados correctamente.')
+            return redirect(reverse('db_evento', args=[evento_id, evento_nombre]))
+        else:
+            messages.error(request, 'Revisá los errores en el formulario.')
     else:
-        form = CargaIndividualForm()
+        form = CargaIndividualForm(instance=persona_existente, evento=evento, persona_id=persona_id)
+
     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
 
 def cargaMasiva(request, evento_id, evento_nombre):
