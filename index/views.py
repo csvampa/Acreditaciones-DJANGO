@@ -46,32 +46,28 @@ class Personas(View):
             if form.is_valid():
                 form.save()
         return redirect('db_evento', evento_nombre=evento_nombre, evento_id=evento_id)
-    # def put(self, request,):
-    #     evento = Evento.objects.get(pk=evento_id)
-    #     form = CargaIndividualForm()
-    #     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
+    '''def put(self, request,evento_id):
+        evento = Evento.objects.get(pk=evento_id)
+        form = CargaIndividualForm()
+        return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})'''
             
 def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
     evento = get_object_or_404(Evento, pk=evento_id)
     persona_existente = None
     if persona_id:
         persona_existente = get_object_or_404(Persona, pk=persona_id, evento=evento)
-
     if request.method == 'POST':
         form = CargaIndividualForm(request.POST, instance=persona_existente, evento=evento, persona_id=persona_id)
-
         if form.is_valid():
             persona = form.save(commit=False)
             persona.evento = evento
-            
             # Crear empresa si es necesario
             empresa_nombre = form.cleaned_data.get('empresa')
             if empresa_nombre:
                 empresa_obj, _ = Empresa.objects.get_or_create(nombre=empresa_nombre)
                 persona.empresa = empresa_obj
             else:
-                persona.empresa = None
-            
+                persona.empresa = None           
             persona.save()
             messages.success(request, f'Datos de la persona con DNI {persona.dni} guardados correctamente.')
             return redirect(reverse('db_evento', args=[evento_id, evento_nombre]))
@@ -79,7 +75,6 @@ def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
             messages.error(request, 'Revisá los errores en el formulario.')
     else:
         form = CargaIndividualForm(instance=persona_existente, evento=evento, persona_id=persona_id)
-
     return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
 
 def cargaMasiva(request, evento_id, evento_nombre):

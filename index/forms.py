@@ -15,11 +15,20 @@ class CargaIndividualForm(forms.ModelForm):
         model = Persona
         fields = '__all__'
         exclude = ['empresa']
+        labels = {
+            'nombreyapellido': 'Nombre y Apellido',
+            'dni': 'DNI',
+            'fechaHastaSeguro': 'Vigencia del Seguro',
+            'acceso': 'Tipo de Acceso',
+            'asistencia': 'Asistencia',
+            'observaciones': 'Observaciones Adicionales',
+        }
         widgets = { 
             'fechaHastaSeguro': forms.DateInput(attrs={'type': 'date'}),
             #'empresa': forms.ModelChoiceField(required=False, queryset=Empresa.objects.all() )
             # 'empresa': autocomplete.ModelSelect2(url='empresa-autocomplete'),
         }
+
     def __init__(self, *args, evento=None, persona_id=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.evento = evento
