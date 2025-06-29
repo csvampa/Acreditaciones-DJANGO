@@ -25,8 +25,6 @@ class Eventos(View):
             return redirect('login')
         
 class Personas(View):
-    def __init__(self) -> None:
-        pass
     def dispatch(self, request, *args, **kwargs):
         # Obtén los valores de evento_id y evento_nombre de los kwargs
         self.evento_id = kwargs.get('evento_id')
@@ -36,6 +34,9 @@ class Personas(View):
         evento = Evento.objects.get(pk=evento_id)
         personas = Persona.objects.filter(evento=evento)
         fecha_actual = datetime.now()
+        # agregar la url de edicion a cada persona
+        for persona in personas:
+            persona.url_edicion = reverse('edicion',args=[evento.id, evento.nombre, persona.id])
         return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre, 'id_evento':evento_id})
     #  POST PARA ASISTENCIA
     def post(self, request, evento_nombre, evento_id):
@@ -53,9 +54,11 @@ class Personas(View):
             
 def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
     evento = get_object_or_404(Evento, pk=evento_id)
-    persona_existente = None
+    # si viene persona_id => estamos editando
     if persona_id:
         persona_existente = get_object_or_404(Persona, pk=persona_id, evento=evento)
+    else:
+        persona_existente = None
     if request.method == 'POST':
         form = CargaIndividualForm(request.POST, instance=persona_existente, evento=evento, persona_id=persona_id)
         if form.is_valid():

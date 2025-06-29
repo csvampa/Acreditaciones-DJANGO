@@ -35,6 +35,9 @@ class CargaIndividualForm(forms.ModelForm):
         self.persona_id = persona_id
 
         self.existing_empresas = Empresa.objects.values_list('nombre', flat=True)
+         # si estamos editando, mostrar el nombre de la empresa
+        if self.instance and self.instance.pk and self.instance.empresa:
+            self.fields['empresa'].initial = self.instance.empresa.nombre
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
@@ -44,7 +47,9 @@ class CargaIndividualForm(forms.ModelForm):
     
     def clean_empresa(self):
         nombre = self.cleaned_data.get('empresa')
-        return nombre.strip() if nombre else None
+        if not nombre or nombre.strip() == "":
+            raise forms.ValidationError("La empresa es obligatoria.")
+        return nombre.strip()
     
 class CargaMasivaForm(forms.Form):
     archivo_excel = forms.FileField(label='Suba un archivo Excel.')

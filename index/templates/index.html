@@ -38,12 +38,17 @@
                         {% for persona in personas %}
                         <tr class= '{% if persona.fechaHastaSeguro > fecha_actual %}fila-roja{% endif %}'>
                             <td>
+                                <form method="get" action="{{ persona.url_edicion }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm">
+                                        <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                                    </button>
+                                </form>
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="persona_id" value="{{ persona.id }}">
-                                    <button type="button" class="btn btn-sm" onclick="editarPersona(this)"> 
-                                        <i class="fa-regular fa-pen-to-square fa-sm"></i>
-                                    </button>
+                                <!--<button type="button" class="btn btn-sm" onclick="editarPersona(this)"> 
+                                    <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                                </button>-->
                                     <td class="hidden">{{ persona.id }}</td>
                                     <td>{{ persona.dni }}</td>
                                     <td>{{ persona.nombreyapellido }}</td>
@@ -60,7 +65,7 @@
                                             {% if persona.asistencia %}checked{% endif %} {% if persona.fechaHasta > fecha_actual %}disabled{% endif %}>
                                         </label>
                                     </td> -->
-                                </form>
+                                </form>         
                             </td>
                         </tr>
                         {% endfor %}
