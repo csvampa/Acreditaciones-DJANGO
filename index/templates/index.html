@@ -23,7 +23,7 @@
                 <table class="table table-bordered" id="miTabla">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Editar</th>
+                            <th>Acciones</th>
                             <th class="hidden">ID</th>
                             <th>DNI</th>
                             <th>Nombre & Apellido</th>
@@ -38,6 +38,12 @@
                         {% for persona in personas %}
                         <tr class= '{% if persona.fechaHastaSeguro > fecha_actual %}fila-roja{% endif %}'>
                             <td>
+                                <form method="post" action="{% url 'eliminar_persona' evento.id evento.nombre persona.id %}" style="display:inline;">
+                                     {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar a {{ persona.nombreyapellido }}?')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
                                 <form method="get" action="{{ persona.url_edicion }}" style="display:inline;">
                                     <button type="submit" class="btn btn-sm">
                                         <i class="fa-regular fa-pen-to-square fa-sm"></i>

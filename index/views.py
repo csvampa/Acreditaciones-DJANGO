@@ -37,7 +37,7 @@ class Personas(View):
         # agregar la url de edicion a cada persona
         for persona in personas:
             persona.url_edicion = reverse('edicion',args=[evento.id, evento.nombre, persona.id])
-        return render(request, 'index.html', {'personas': personas, 'fecha_actual': fecha_actual, 'nombre_evento':evento_nombre, 'id_evento':evento_id})
+        return render(request, 'index.html', {'personas': personas, 'evento': evento, 'fecha_actual': fecha_actual})
     #  POST PARA ASISTENCIA
     def post(self, request, evento_nombre, evento_id):
         persona_id = request.POST.get('persona_id')
@@ -47,6 +47,11 @@ class Personas(View):
             if form.is_valid():
                 form.save()
         return redirect('db_evento', evento_nombre=evento_nombre, evento_id=evento_id)
+    def eliminar_persona(request, evento_id, evento_nombre, persona_id):
+        persona = get_object_or_404(Persona, pk=persona_id)
+        persona.delete()
+        messages.success(request, f"El trabajador {persona.nombreyapellido} fue eliminado correctamente.")
+        return redirect('db_evento', evento_id=evento_id, evento_nombre=evento_nombre)
     '''def put(self, request,evento_id):
         evento = Evento.objects.get(pk=evento_id)
         form = CargaIndividualForm()
@@ -128,3 +133,4 @@ def cargaMasiva(request, evento_id, evento_nombre):
 
 def error_view(request):
     return render(request, 'error.html')
+
