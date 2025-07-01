@@ -33,9 +33,10 @@ class Personas(View):
     def get(self, request, evento_id, evento_nombre):
         evento = Evento.objects.get(pk=evento_id)
         personas = Persona.objects.filter(evento=evento)
-        fecha_actual = datetime.now()
+        fecha_actual = datetime.now().date()
         # agregar la url de edicion a cada persona
         for persona in personas:
+            persona.fecha_vencida = persona.fechaHastaSeguro and persona.fechaHastaSeguro <= fecha_actual
             persona.url_edicion = reverse('edicion',args=[evento.id, evento.nombre, persona.id])
         return render(request, 'index.html', {'personas': personas, 'evento': evento, 'fecha_actual': fecha_actual})
     #  POST PARA ASISTENCIA
@@ -51,14 +52,14 @@ class Personas(View):
         persona = get_object_or_404(Persona, pk=persona_id)
         persona.delete()
         messages.success(request, f"El trabajador {persona.nombreyapellido} fue eliminado correctamente.")
-        return redirect('db_evento', evento_id=evento_id, evento_nombre=evento_nombre)
-    '''def put(self, request,evento_id):
-        evento = Evento.objects.get(pk=evento_id)
-        form = CargaIndividualForm()
-        return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})'''
+        return redirect('db_evento', evento_nombre=evento_nombre, evento_id=evento_id)
+  
             
 def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
     evento = get_object_or_404(Evento, pk=evento_id)
+    modo_lectura = False
+    if request.resolver_match.url_name == "ver":
+        modo_lectura = True
     # si viene persona_id => estamos editando
     if persona_id:
         persona_existente = get_object_or_404(Persona, pk=persona_id, evento=evento)
@@ -83,7 +84,7 @@ def cargaIndividual(request, evento_id, evento_nombre, persona_id=None):
             messages.error(request, 'Revisá los errores en el formulario.')
     else:
         form = CargaIndividualForm(instance=persona_existente, evento=evento, persona_id=persona_id)
-    return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento})
+    return render(request, 'cargaIndividual.html', {'form': form, 'evento': evento, 'modo_lectura': modo_lectura})
 
 def cargaMasiva(request, evento_id, evento_nombre):
     evento = Evento.objects.get(pk=evento_id)

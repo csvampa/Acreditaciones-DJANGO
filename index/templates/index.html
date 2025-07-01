@@ -36,17 +36,25 @@
                     </thead>
                     <tbody>
                         {% for persona in personas %}
-                        <tr class= '{% if persona.fechaHastaSeguro > fecha_actual %}fila-roja{% endif %}'>
+                        <tr class="{% if persona.fecha_vencida %}fila-roja{% endif %}">
                             <td>
+                                <!-- ELIMINAR -->
                                 <form method="post" action="{% url 'eliminar_persona' evento.id evento.nombre persona.id %}" style="display:inline;">
                                      {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar a {{ persona.nombreyapellido }}?')">
+                                    <button type="submit" class="btn btn-outline-dark btn-sm" onclick="return confirm('¿Estás seguro de eliminar a {{ persona.nombreyapellido }}?')">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                <!-- EDITAR -->
                                 <form method="get" action="{{ persona.url_edicion }}" style="display:inline;">
                                     <button type="submit" class="btn btn-sm">
                                         <i class="fa-regular fa-pen-to-square fa-sm"></i>
+                                    </button>
+                                </form>
+                                <!-- VER -->
+                                <form method="get" action="{% url 'ver' evento.id evento.nombre persona.id %}" style="display:inline;">
+                                    <button type="submit" class="btn btn-outline-dark btn-sm">
+                                        <i class="fa-regular fa-eye"></i>
                                     </button>
                                 </form>
                                 <form method="post">
