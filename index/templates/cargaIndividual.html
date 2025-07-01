@@ -44,14 +44,18 @@
                             {% endfor %}
                         </datalist>
                         {% endif %}
-                        <!-- <input type="hidden" name="asistencia" value="False"> Campo oculto para enviar False por defecto -->
-                        <!-- <p class="form-group">
-                                        <input type="checkbox" id="asistencia_checkbox" name="asistencia" value="True" {% if form.asistencia.value %}checked{% endif %}>
-                                        <label for="asistencia_checkbox">Asistencia</label>
-                                    </p> -->
+                        {% if not modo_lectura %}
                         <button type="submit" class="btn btn-primary">Save</button>
+                        {% endif %}
                         <a href="{% url 'db_evento' evento.id evento.nombre %}" class="btn btn-secondary">Cancelar</a>
                 </form>
+                {% if modo_lectura %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function(){
+                        document.querySelectorAll("input, select, textarea").forEach(el => el.disabled = true);
+                    });
+                </script>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -10,6 +10,8 @@ urlpatterns = [
     path('accounts/profile/<int:evento_id>/<str:evento_nombre>/eliminar/<int:persona_id>/', views.Personas.eliminar_persona, name='eliminar_persona'),
     path('accounts/profile/<int:evento_id>/<str:evento_nombre>/ver/<int:persona_id>/', views.cargaIndividual, name='ver'),
     path('accounts/profile/<int:evento_id>/<str:evento_nombre>/cargaMasiva', views.cargaMasiva, name='cargaMasiva'),
-    path('index/error.html', views.error_view, name='error'),
+    # path('index/error.html', views.error_view, name='error'),
     path('eventos/', Eventos.as_view(), name='eventos'),
     ]
+
+handler404 = 'mi_app.views.custom_404_view'

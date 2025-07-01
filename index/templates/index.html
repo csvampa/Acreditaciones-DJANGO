@@ -41,7 +41,7 @@
                                 <!-- ELIMINAR -->
                                 <form method="post" action="{% url 'eliminar_persona' evento.id evento.nombre persona.id %}" style="display:inline;">
                                      {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-dark btn-sm" onclick="return confirm('¿Estás seguro de eliminar a {{ persona.nombreyapellido }}?')">
+                                    <button type="submit" class="btn btn-outline-dark btn-sm border-0" onclick="return confirm('¿Estás seguro de eliminar a {{ persona.nombreyapellido }}?')">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
@@ -53,7 +53,7 @@
                                 </form>
                                 <!-- VER -->
                                 <form method="get" action="{% url 'ver' evento.id evento.nombre persona.id %}" style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-dark btn-sm">
+                                    <button type="submit" class="btn btn-outline-dark btn-sm border-0">
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
                                 </form>

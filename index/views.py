@@ -132,6 +132,6 @@ def cargaMasiva(request, evento_id, evento_nombre):
         else:
             return render(request, 'error.html', {'mensaje': 'El archivo no es un archivo Excel válido.'})
 
-def error_view(request):
-    return render(request, 'error.html')
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
 
